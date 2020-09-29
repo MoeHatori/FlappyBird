@@ -13,7 +13,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var scrollNode:SKNode!
     var wallNode:SKNode!
     var bird:SKSpriteNode!
-    var orange:SKNode! //アイテム用の宣言
+    var orangeNode:SKNode! //アイテム用の宣言
     
     // 衝突判定カテゴリー
     let birdCategory: UInt32 = 1 << 0       // 0...00001
@@ -45,19 +45,100 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // 壁用のノード
         wallNode = SKNode()
         scrollNode.addChild(wallNode)
+        
+        //オレンジ用のノード
+        orangeNode = SKNode()
+        scrollNode.addChild(orangeNode)
 
         // 各種スプライトを生成する処理をメソッドに分割
         setupGround()
         setupCloud()
         setupWall()
         setupBird()
+        setupOrange()  //item用
         
         setupScoreLabel()
     }
+    
+    
+    //item(orange)用のメソッド
+    
+    func setupOrange(){
+        
+        //オレンジを表示するためのメソッド
+        let orangeTexture = SKTexture(imageNamed: "orange")
+        orangeTexture.filteringMode = .linear
+        
+        
+        // 移動する距離を計算
+        let movingDistance_orange = CGFloat(self.frame.size.width + orangeTexture.size().width)
+
+        // 画面外まで移動するアクションを作成
+        let moveOrange = SKAction.moveBy(x: -movingDistance_orange, y: 0, duration:4)
+
+        // 自身を取り除くアクションを作成
+        let removeOrange = SKAction.removeFromParent()
+
+        // 2つのアニメーションを順に実行するアクションを作成
+        let orangeAnimation = SKAction.sequence([moveOrange, removeOrange])
+        
+        let random_orange_range = orangeTexture.size().height * 3
+
+        // オレンジを生成するアクションを作成
+        let createOrangeAnimation = SKAction.run({
+
+           // オレンジ関連のノードを乗せるノードを作成
+            let orange = SKNode()
+            //オレンジ関連のノードの中心座標
+            orange.position = CGPoint(x: self.frame.size.width/2, y:self.frame.size.height/2)
+            orange.zPosition = -50
+        
+            //オレンジの位置を少しずらすためのランダムを生成
+            let random_orange_y = CGFloat.random(in: 0..<random_orange_range)
+
+            // オレンジを作成
+            let position_orange = SKSpriteNode(texture: orangeTexture)
+            position_orange.size = CGSize(width: orangeTexture.size().width/3, height: orangeTexture.size().height/3)
+            position_orange.position = CGPoint(x: random_orange_y, y: random_orange_y)
+
+            orange.addChild(position_orange)
+
+            orange.run(orangeAnimation)
+
+            self.orangeNode.addChild(orange)
+
+         })
+
+            // 次のオレンジ作成までの時間待ちのアクションを作成
+            let waitAnimation_orange = SKAction.wait(forDuration:2)
+
+            // オレンジを作成->時間待ち->オレンジを作成を無限に繰り返すアクションを作成
+            let repeatForeverAnimation = SKAction.repeatForever(SKAction.sequence([createOrangeAnimation, waitAnimation_orange]))
+
+            orangeNode.run(repeatForeverAnimation)
+        
+        }
+
+        
+        
+        
+//        // テクスチャを指定してスプライトを作成する
+//        let orangeSprite = SKSpriteNode(texture: orangeTexture)
+//
+//        // スプライトの表示する位置を指定する
+//        orangeSprite.position = CGPoint(
+//            x: 100,
+//            y: 100
+//        )
+//        orangeSprite.size = CGSize(width: orangeTexture.size().width/3, height: orangeTexture.size().height/3)
+//
+//        // シーンにスプライトを追加する
+//        addChild(orangeSprite)
         
     
+    
     //groundを表示するためのメソッド
-        func setupGround() {
+   func setupGround() {
         // 地面の画像を読み込む
         let groundTexture = SKTexture(imageNamed: "ground")
         groundTexture.filteringMode = .nearest
@@ -238,38 +319,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     //鳥を表示するためのメソッド
      func setupBird() {
-           // 鳥の画像を2種類読み込む
-           let birdTextureA = SKTexture(imageNamed: "bird_a")
-           birdTextureA.filteringMode = .linear
-           let birdTextureB = SKTexture(imageNamed: "bird_b")
-           birdTextureB.filteringMode = .linear
+        // 鳥の画像を2種類読み込む
+        let birdTextureA = SKTexture(imageNamed: "bird_a")
+        birdTextureA.filteringMode = .linear
+        let birdTextureB = SKTexture(imageNamed: "bird_b")
+        birdTextureB.filteringMode = .linear
+
+        // 2種類のテクスチャを交互に変更するアニメーションを作成
+        let texturesAnimation = SKAction.animate(with: [birdTextureA, birdTextureB], timePerFrame: 0.2)
+        let flap = SKAction.repeatForever(texturesAnimation)
+
+        // スプライトを作成
+        bird = SKSpriteNode(texture: birdTextureA)
+        bird.position = CGPoint(x: self.frame.size.width * 0.2, y:self.frame.size.height * 0.7)
         
+        // 物理演算を設定
+        bird.physicsBody = SKPhysicsBody(circleOfRadius: bird.size.height / 2)
         
+        // 衝突した時に回転させない
+        bird.physicsBody?.allowsRotation = false
 
-           // 2種類のテクスチャを交互に変更するアニメーションを作成
-           let texturesAnimation = SKAction.animate(with: [birdTextureA, birdTextureB], timePerFrame: 0.2)
-           let flap = SKAction.repeatForever(texturesAnimation)
+        // 衝突のカテゴリー設定
+        bird.physicsBody?.categoryBitMask = birdCategory
+        bird.physicsBody?.collisionBitMask = groundCategory | wallCategory
+        bird.physicsBody?.contactTestBitMask = groundCategory | wallCategory
 
-          // スプライトを作成
-          bird = SKSpriteNode(texture: birdTextureA)
-          bird.position = CGPoint(x: self.frame.size.width * 0.2, y:self.frame.size.height * 0.7)
+        // アニメーションを設定
+        bird.run(flap)
 
-           // 物理演算を設定
-           bird.physicsBody = SKPhysicsBody(circleOfRadius: bird.size.height / 2)
-        
-           // 衝突した時に回転させない
-           bird.physicsBody?.allowsRotation = false
-
-           // 衝突のカテゴリー設定
-           bird.physicsBody?.categoryBitMask = birdCategory
-           bird.physicsBody?.collisionBitMask = groundCategory | wallCategory
-           bird.physicsBody?.contactTestBitMask = groundCategory | wallCategory
-
-           // アニメーションを設定
-           bird.run(flap)
-
-           // スプライトを追加する
-           addChild(bird)
+        // スプライトを追加する
+        addChild(bird)
+           
        }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
