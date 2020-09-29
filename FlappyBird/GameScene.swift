@@ -20,6 +20,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let groundCategory: UInt32 = 1 << 1     // 0...00010
     let wallCategory: UInt32 = 1 << 2       // 0...00100
     let scoreCategory: UInt32 = 1 << 3      // 0...01000
+    let orangeCategory: UInt32 = 1 << 4     // 0...10000   オレンジスコア用
     
 
     // スコア用
@@ -27,6 +28,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let userDefaults:UserDefaults = UserDefaults.standard
     var scoreLabelNode:SKLabelNode!
     var bestScoreLabelNode:SKLabelNode!
+    
+    //アイテム（オレンジ）用のスコア
+    var orangescore = 0
+    var orangeLabelNode:SKLabelNode!
     
     // SKView上にシーンが表示されたときに呼ばれるメソッド
     override func didMove(to view: SKView) {
@@ -100,6 +105,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let position_orange = SKSpriteNode(texture: orangeTexture)
             position_orange.size = CGSize(width: orangeTexture.size().width/3, height: orangeTexture.size().height/3)
             position_orange.position = CGPoint(x: random_orange_y, y: random_orange_y)
+            
+            //物理演算を受け付けるようにする
+            position_orange.physicsBody = SKPhysicsBody(circleOfRadius:orangeTexture.size().height / 2)
+            position_orange.physicsBody?.categoryBitMask = self.orangeCategory
+            //オレンジが動かないようにしている
+            position_orange.physicsBody?.isDynamic = false
+        
+            // 衝突のカテゴリー設定
+            position_orange.physicsBody?.categoryBitMask = self.orangeCategory
+            position_orange.physicsBody?.contactTestBitMask = self.birdCategory
+            
 
             orange.addChild(position_orange)
 
@@ -118,22 +134,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             orangeNode.run(repeatForeverAnimation)
         
         }
-
-        
-        
-        
-//        // テクスチャを指定してスプライトを作成する
-//        let orangeSprite = SKSpriteNode(texture: orangeTexture)
-//
-//        // スプライトの表示する位置を指定する
-//        orangeSprite.position = CGPoint(
-//            x: 100,
-//            y: 100
-//        )
-//        orangeSprite.size = CGSize(width: orangeTexture.size().width/3, height: orangeTexture.size().height/3)
-//
-//        // シーンにスプライトを追加する
-//        addChild(orangeSprite)
         
     
     
@@ -342,7 +342,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // 衝突のカテゴリー設定
         bird.physicsBody?.categoryBitMask = birdCategory
         bird.physicsBody?.collisionBitMask = groundCategory | wallCategory
-        bird.physicsBody?.contactTestBitMask = groundCategory | wallCategory
+        bird.physicsBody?.contactTestBitMask = groundCategory | wallCategory | orangeCategory
 
         // アニメーションを設定
         bird.run(flap)
@@ -364,7 +364,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    // SKPhysicsContactDelegateのメソッド。衝突したときに呼ばれる
+    // SKPhysicsContactDelegateのメソッド(衝突したときに呼ばれる)
     func didBegin(_ contact: SKPhysicsContact) {
         // ゲームオーバーのときは何もしない
         if scrollNode.speed <= 0 {
@@ -375,16 +375,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // スコア用の物体と衝突した
             print("ScoreUp")
             score += 1
-            scoreLabelNode.text = "Score:\(score)"    // ←追加
+            scoreLabelNode.text = "Score:\(score)"
 
             // ベストスコア更新か確認する
             var bestScore = userDefaults.integer(forKey: "BEST")
             if score > bestScore {
                 bestScore = score
-                bestScoreLabelNode.text = "Best Score:\(bestScore)"    // ←追加
+                bestScoreLabelNode.text = "Best Score:\(bestScore)"
                 userDefaults.set(bestScore, forKey: "BEST")
                 userDefaults.synchronize()
             }
+            
+        } else if(contact.bodyA.categoryBitMask & orangeCategory) == orangeCategory || (contact.bodyB.categoryBitMask & orangeCategory) == orangeCategory{
+            //オレンジと衝突した
+            print("item Score up")
+            orangescore += 1
+            
+            orangeLabelNode.text = "ItemScore:\(orangescore)"
+            
+            orangeNode.removeFromParent()
+            
         } else {
             // 壁か地面と衝突した
             print("GameOver")
@@ -401,8 +411,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    
+    
+    
+    
     func restart() {
         score = 0
+        orangescore = 0
         scoreLabelNode.text = "Score:\(score)"    // ←追加
 
         bird.position = CGPoint(x: self.frame.size.width * 0.2, y:self.frame.size.height * 0.7)
@@ -437,6 +452,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let bestScore = userDefaults.integer(forKey: "BEST")
         bestScoreLabelNode.text = "Best Score:\(bestScore)"
         self.addChild(bestScoreLabelNode)
+        
+        orangeLabelNode = SKLabelNode()
+        orangeLabelNode.fontColor = UIColor.black
+        orangeLabelNode.position = CGPoint(x: 10, y:self.frame.size.height - 120)
+        orangeLabelNode.zPosition = 100
+        orangeLabelNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
+        orangeLabelNode.text = "Item Score:\(orangescore)"
+        self.addChild(orangeLabelNode)
+        
+        
     }
     
     
