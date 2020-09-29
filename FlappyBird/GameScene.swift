@@ -366,6 +366,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     // SKPhysicsContactDelegateのメソッド(衝突したときに呼ばれる)
     func didBegin(_ contact: SKPhysicsContact) {
+        
+        var orangeBody: SKPhysicsBody
+        
+        
         // ゲームオーバーのときは何もしない
         if scrollNode.speed <= 0 {
             return
@@ -393,7 +397,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             orangeLabelNode.text = "ItemScore:\(orangescore)"
             
-            orangeNode.removeFromParent()
+            //衝突したオレンジを消す処理
+            //AとBのどちらがオレンジか確認する
+            if (contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask){
+                orangeBody = contact.bodyB
+            } else {
+                orangeBody = contact.bodyA
+            }
+            //衝突したオレンジのノードだけを消す
+            orangeBody.node?.removeFromParent()
+            
             
         } else {
             // 壁か地面と衝突した
