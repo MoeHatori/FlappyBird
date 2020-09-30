@@ -9,6 +9,7 @@
 import SpriteKit
 import AVFoundation
 
+
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var scrollNode:SKNode!
@@ -58,7 +59,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scrollNode.addChild(orangeNode)
         
         //オーディオ用のノード
-        flappySoundNode = SKAudioNode(fileNamed: "Flappysound.mp3")
+        //flappySoundNode = SKAudioNode(fileNamed: "Flappysound.mp3")
+        flappySoundNode = SKAudioNode(url: Bundle.main.url(forResource: "Flappysound", withExtension: "mp3")!)
         flappySoundNode.autoplayLooped = false
         scrollNode.addChild(flappySoundNode)
 
@@ -114,7 +116,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             position_orange.position = CGPoint(x: random_orange_y, y: random_orange_y)
             
             //物理演算を受け付けるようにする
-            position_orange.physicsBody = SKPhysicsBody(circleOfRadius:orangeTexture.size().height / 2)
+            position_orange.physicsBody = SKPhysicsBody(circleOfRadius:orangeTexture.size().height / 3)
             position_orange.physicsBody?.categoryBitMask = self.orangeCategory
             //オレンジが動かないようにしている
             position_orange.physicsBody?.isDynamic = false
@@ -442,7 +444,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func restart() {
         score = 0
         orangescore = 0
-        scoreLabelNode.text = "Score:\(score)"    // ←追加
+        scoreLabelNode.text = "Score:\(score)"
+        orangeLabelNode.text = "ItemScore:\(orangescore)"
 
         bird.position = CGPoint(x: self.frame.size.width * 0.2, y:self.frame.size.height * 0.7)
         bird.physicsBody?.velocity = CGVector.zero
