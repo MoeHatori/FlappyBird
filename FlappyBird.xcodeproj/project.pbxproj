@@ -14,7 +14,8 @@
 		E668B1D3251C2E4B008F0D7D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E668B1D2251C2E4B008F0D7D /* Assets.xcassets */; };
 		E668B1D6251C2E4B008F0D7D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E668B1D4251C2E4B008F0D7D /* LaunchScreen.storyboard */; };
 		E668B1DE251C45D7008F0D7D /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = E668B1DD251C45D7008F0D7D /* GameScene.swift */; };
-		E6A9F9E725237573005E2891 /* Flappysound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = E6A9F9E625237573005E2891 /* Flappysound.mp3 */; };
+		E6A9F9E9252416D0005E2891 /* Flappysound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = E6A9F9E8252416CF005E2891 /* Flappysound.mp3 */; };
+		E6A9F9EB25241729005E2891 /* Onmtp-Inspiration02-3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = E6A9F9EA25241729005E2891 /* Onmtp-Inspiration02-3.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +28,8 @@
 		E668B1D5251C2E4B008F0D7D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E668B1D7251C2E4B008F0D7D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E668B1DD251C45D7008F0D7D /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
-		E6A9F9E625237573005E2891 /* Flappysound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = Flappysound.mp3; path = ../../../Downloads/Flappysound.mp3; sourceTree = "<group>"; };
+		E6A9F9E8252416CF005E2891 /* Flappysound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Flappysound.mp3; sourceTree = "<group>"; };
+		E6A9F9EA25241729005E2891 /* Onmtp-Inspiration02-3.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "Onmtp-Inspiration02-3.mp3"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,7 +70,8 @@
 				E668B1D2251C2E4B008F0D7D /* Assets.xcassets */,
 				E668B1D4251C2E4B008F0D7D /* LaunchScreen.storyboard */,
 				E668B1D7251C2E4B008F0D7D /* Info.plist */,
-				E6A9F9E625237573005E2891 /* Flappysound.mp3 */,
+				E6A9F9E8252416CF005E2891 /* Flappysound.mp3 */,
+				E6A9F9EA25241729005E2891 /* Onmtp-Inspiration02-3.mp3 */,
 			);
 			path = FlappyBird;
 			sourceTree = "<group>";
@@ -131,9 +134,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E6A9F9E9252416D0005E2891 /* Flappysound.mp3 in Resources */,
 				E668B1D6251C2E4B008F0D7D /* LaunchScreen.storyboard in Resources */,
+				E6A9F9EB25241729005E2891 /* Onmtp-Inspiration02-3.mp3 in Resources */,
 				E668B1D3251C2E4B008F0D7D /* Assets.xcassets in Resources */,
-				E6A9F9E725237573005E2891 /* Flappysound.mp3 in Resources */,
 				E668B1D1251C2E48008F0D7D /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
